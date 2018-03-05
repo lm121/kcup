@@ -4,7 +4,7 @@ import KDDCup99_common_ml as kup
 import sys
 import os
 import shutil
-
+from time import time
 from collections import OrderedDict
 from numpy import array
 from math import sqrt
@@ -125,13 +125,14 @@ if __name__ == "__main__":
         
      
 
-
+        start=time()
         tree_model = DecisionTree.trainClassifier(parsed_labelpoint, numClasses=kup.num_attack_types, 
                                           categoricalFeaturesInfo={1: len(protocols), 2: len(services), 3: len(flags)},
                                           impurity='gini', maxDepth=treeDepth, maxBins=100,minInstancesPerNode=1)
         shutil.rmtree(dt_path, ignore_errors=True)
-        tree_model.save(sc,dt_path)
-
+        tree_model.save(sc,dt_path)        
+        trainTime=time()-start
+        print("Train time: {} ".format(round(trainTime,3)))
     if opt=="test"  or opt=="all":
 
         test_split=sc.textFile(golden_file).map(lambda x:x.split(","))
@@ -139,7 +140,15 @@ if __name__ == "__main__":
 
         # Evaluate model on test instances and compute test error
         model=DecisionTreeModel.load(sc,dt_path)
+        start=time()
         predictions = model.predict(parsed_test.map(lambda x: x.features))
+        predictions.count()                
+        testTime=time()-start
+        print("Test time: {} ".format(round(testTime,3)))
+
+
+
+
         labelsAndPredictions = parsed_test.map(lambda lp: lp.label).zip(predictions)
 
         kup.computeF1ScoreForBinaryClassifier(labelsAndPredictions)

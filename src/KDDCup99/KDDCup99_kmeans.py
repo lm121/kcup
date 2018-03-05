@@ -8,7 +8,7 @@ import sys
 import os
 import shutil
 
-
+from time import time
 from collections import OrderedDict
 from numpy import array
 from math import sqrt
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         train_df.printSchema()
         train_df.show(3)
 
-
+        start=time()
         # Evaluate values of k from min_k to max_k+1
         print "Calculating total in within cluster distance for different k values (%(min_k)d to %(max_k)d):" % {"min_k":min_k,"max_k": max_k}
         scores = map(lambda k: clustering_score_vec(train_df, k), range(min_k,max_k+1,10))
@@ -142,11 +142,13 @@ if __name__ == "__main__":
         # We use here standardized data - it is more appropriate for exploratory purposes
         print "Obtaining clustering result sample for k=%(min_k)d..." % {"min_k": min_k}
         best_model = min(scores, key=lambda x: x[2])[1]
+        shutil.rmtree(model_path, ignore_errors=True)
+        best_model.save(model_path)        
+        trainTime=time()-start
+        print("Train time: {} ".format(round(trainTime,3)))
+
         print("summary type" +str(type(best_model.summary.cluster)))
         best_model.summary.cluster.printSchema()
-        shutil.rmtree(model_path, ignore_errors=True)
-        best_model.save(model_path)
-
 
         # compute the corresponding attack type for each cluster
         predict_df=best_model.transform(train_df)
@@ -175,13 +177,17 @@ if __name__ == "__main__":
         test_df=test_df_tmp.drop("features").withColumnRenamed("scaledFeatures","features")
 
         best_model=KMeansModel.load(model_path)
+        start=time()
         #predict_df=best_model.transform(test_df).select("label".alias("actualLabel"),"prediction".alias("predic"))
         predict_df=best_model.transform(test_df).select(col("label").alias("actualLabel"),"prediction")
         
         labelPredictedLabel=predict_df.join(cluster_label,cluster_label.prediction== predict_df.prediction).select(predict_df.actualLabel, cluster_label.label) 
-        #labelPredictedLabel.show(50)
-        labelPredictedLabel.printSchema()
+        labelPredictedLabel.show(3)
+        #labelPredictedLabel.printSchema()    
+        testTime=time()-start
+        print("Test time: {} ".format(round(testTime,3)))
         predictionAndLabels=labelPredictedLabel.rdd
+
 
         
 

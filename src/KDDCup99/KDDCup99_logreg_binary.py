@@ -5,8 +5,7 @@ import KDDCup99_common_ml as kup
 import sys
 import os
 import shutil
-
-
+from time import time
 from collections import OrderedDict
 from numpy import array
 from math import sqrt
@@ -87,14 +86,15 @@ if __name__ == "__main__":
         tmp_df=train_df.groupBy("label").count()
         tmp_df.show(10)
 
-                
+        start=time()       
         lr = LogisticRegression(maxIter=20, regParam=regularizationParameter, elasticNetParam=0.2,family="binomial")
 
         # Fit and save the model
         lrModel = lr.fit(train_df)
         shutil.rmtree(model_path)
         lrModel.save(model_path)
-
+        trainTime=time()-start
+        print("Train time: {} ".format(round(trainTime,3)))
         # print model summary
         trainingSummary = lrModel.summary            
         print("areaUnderROC: " + str(trainingSummary.areaUnderROC))
@@ -115,12 +115,12 @@ if __name__ == "__main__":
         scalerModel=StandardScalerModel.load(scaler_model_path)
         test_df_tmp= scalerModel.transform(parsed_test_data_df)
         test_df=test_df_tmp.drop("features").withColumnRenamed("scaledFeatures","features")
-
-        testPrediction= lrModel.transform(test_df) 
-       
+        start=time()
+        testPrediction= lrModel.transform(test_df)            
+        testPrediction.show(3)
+        testTime=time()-start
+        print("Test time: {} ".format(round(testTime,3)))
         testPrediction.printSchema()
-        testPrediction.show(5)
-        
         predictionAndLabelsRdd=testPrediction.select("label","prediction").rdd            
         kup.computeF1ScoreForBinaryClassifier(predictionAndLabelsRdd)
 

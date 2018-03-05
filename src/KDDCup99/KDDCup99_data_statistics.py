@@ -31,7 +31,7 @@ except ImportError as e:
 
 def printUsageExit(status):
     print "Usage: spark-submit --driver-memory 4g " + \
-          "KDDCup99_logreg_binary.py [option:stats] [trainData] [testData]"
+          "KDDCup99_data_statistics.py [option:stats] [trainData] [testData]"
     sys.exit(status)
 
 if __name__ == "__main__":

@@ -48,14 +48,14 @@ elif [ $opt == "DT" ];then
 	if [ $# -ge 3 ];then trainType=$3; fi
 	treeDepth=4
 	if [ $# -ge 4 ];then treeDepth=$4; fi
-	echo "execute DT phase; $phase $trainType;treeDepth $treeDepth "
+	echo "execute DT; phase $phase; train type $trainType;treeDepth $treeDepth "
 	time spark-submit --master ${sparkMaster} --total-executor-cores 4 --executor-memory 4g ${kupDir}/KDDCup99_DT.py $phase $trainType ${treeDepth} $trainData $testData
 
 elif [  "$opt" = "kmeans" ];then
 
 	if [ $# -ge 2 ];then phase=$2; fi
-	min=40
-	max=40
+	min=24
+	max=24
 	if [ $# -ge 4 ];then min=$3;max=$4; fi
 	echo "execute kmeans;  phase $phase; min $min ; max $max "
 	time spark-submit --master ${sparkMaster} --total-executor-cores 4 --executor-memory 4g ${kupDir}/KDDCup99_kmeans.py $phase $min $max $trainData $testData
@@ -63,10 +63,8 @@ elif [  "$opt" = "kmeans" ];then
 elif [ $opt == "dataStat" ];then
 	
 	if [ $# -ge 2 ];then phase=$2; fi
-	trainType="binary"
-	if [ $# -ge 3 ];then trainType=$3; fi
-	echo "execute DT; phase $phase $trainType"
-	time spark-submit --master ${sparkMaster} --total-executor-cores 4 --executor-memory 4g ${kupDir}/KDDCup99_DT.py $phase $trainType $trainData $testData
+	echo "compute data statistics; phase $phase "
+	time spark-submit --master ${sparkMaster} --total-executor-cores 4 --executor-memory 4g ${kupDir}/KDDCup99_data_statitics.py $phase $trainData $testData
 
 elif [[ $opt = "trySpark" ]];then
 	echo "explore spark"
