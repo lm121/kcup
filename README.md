@@ -31,14 +31,17 @@ scripts/
 This folder includes all the scripts needed to train and test the three different learning models, namely logistic regression, decision tree and kmeans.
 
 To run logistic regression:
+```
 cd $kcup_HOME; ./scripts/runKcup.sh logRegBinary train/test/all [regularization parameter] 
-
+```
 To run decision tree:
+```
 cd $kcup_HOME; ./scripts/runKcup.sh DT train/test/all [binary/multiClass] [treeDepth] 
-
+```
 To run kmeans:
+```
 cd $kcup_HOME; ./scripts/runKcup.sh kmeans train/test/all [minNumClusters] [maxNumClusters]
-
+```
 
 ### High level description of Source code
 ```
