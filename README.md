@@ -3,10 +3,11 @@ This project uses three algorithms including logistic regression, decision tree 
 tackle the network intrusion competition in KDD Cup 1999 with python and Spark. 
 
 ### Documentation
+```
 docs
 ├── KDDCup99.pptx
 ├── experimentFigures.xlsx
-
+```
 KDDCup99.pptx provides a high level summary of the entire project. It discusses the statistics of the 
 datasets, the algorithms used, and the parameter study and performance comparison between different
 learning models.
@@ -22,11 +23,11 @@ If that is not the case, please change the "dataDir" variable in ./script/runKCu
 
 
 ### Run
-
+```
 scripts/
 ├── runAll.sh
 └── runKCup.sh
-
+```
 This folder includes all the scripts needed to train and test the three different learning models, namely logistic regression, decision tree and kmeans.
 
 To run logistic regression:
@@ -40,7 +41,7 @@ cd $kcup_HOME; ./scripts/runKcup.sh kmeans train/test/all [minNumClusters] [maxN
 
 
 ### High level description of Source code
-
+```
 src
 ├── KDDCup99
 │   ├── KDDCup99_common_ml.py
@@ -50,7 +51,7 @@ src
 │   ├── KDDCup99_logreg_binary.py
 │   ├── KDDCup99_logreg_multiclass.py
 └── test
-
+```
 
 This folder contains the python source code implementing the training and testing of different models.
 The file names are self explanatory except KDDCup99_common_ml.py which implements the common data preprocessing functions
