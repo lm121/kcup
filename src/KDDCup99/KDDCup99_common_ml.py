@@ -75,7 +75,11 @@ def parse_as_labelpoint(line):
     label=line_split[-1]
     #label_num=attack_types[label]
     label_num=attacktypeToNumerical(label)
-    return (label_num, Vectors.dense(array([float(x) for x in clean_line_split])))
+    try:
+        labelfeature=(label_num, Vectors.dense(array([float(x) for x in clean_line_split])))
+    except:
+        labelfeature=(-1.0,Vectors.dense(array(range(0,len(clean_line_split)))))
+    return labelfeature
 
 
 

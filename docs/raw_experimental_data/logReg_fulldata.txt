@@ -1,0 +1,8 @@
+confusion matrix: 225569 59599 994 24867
+prec Recall f1: 0.995612699337 0.900705170183 0.945783953425
+Test Error = 0.0831465876172 Accuracy = 0.916853412383
+
+Test time: 0.121 
+
+Train time: 128.702 
+areaUnderROC: 0.999453435864

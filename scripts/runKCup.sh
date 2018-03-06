@@ -19,7 +19,8 @@ export saved_model_path="$curdir/../trained_model"
 kupDir=${curdir}/../src/KDDCup99
 dataDir=${curdir}/../../datasets
 testData=${dataDir}/corrected
-trainData=${dataDir}/kddcup.data_10_percent.txt
+#trainData=${dataDir}/kddcup.data_10_percent.txt
+trainData=${dataDir}/kddcup.data.txt
 opt=$1
 phase="help"
 

@@ -167,9 +167,9 @@ if __name__ == "__main__":
         cluster_label=spark.read.csv(cluster_label_path,header='true',inferSchema='true')
         cluster_label.printSchema()
         cluster_label.show(5)
-        #sys.exit(0)
+        
         test_data=sc.textFile(golden_file)  
-        parsed_test_data=test_data.map(kup.parse_as_labelpoint)   
+        parsed_test_data=test_data.map(kup.parse_as_labelpoint).filter(lambda x : x[0]!=-1.0)   
         parsed_test_data_df=spark.createDataFrame(parsed_test_data,["label","features"])
 
         scalerModel=StandardScalerModel.load(scaler_model_path)
@@ -178,12 +178,12 @@ if __name__ == "__main__":
 
         best_model=KMeansModel.load(model_path)
         start=time()
-        #predict_df=best_model.transform(test_df).select("label".alias("actualLabel"),"prediction".alias("predic"))
+        
         predict_df=best_model.transform(test_df).select(col("label").alias("actualLabel"),"prediction")
         
         labelPredictedLabel=predict_df.join(cluster_label,cluster_label.prediction== predict_df.prediction).select(predict_df.actualLabel, cluster_label.label) 
         labelPredictedLabel.show(3)
-        #labelPredictedLabel.printSchema()    
+         
         testTime=time()-start
         print("Test time: {} ".format(round(testTime,3)))
         predictionAndLabels=labelPredictedLabel.rdd

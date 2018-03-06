@@ -20,11 +20,11 @@ rm -f /tmp/kmeans.log;for ll in 5 10; do echo "cluster size $ll";./scripts/runKC
 
 
 #test logreg runtime
-for((i=0;i<3;i++)); do ./scripts/runKCup.sh logRegBinary all 0.01; done  |tee /tmp/logregTime.log
+for((i=0;i<1;i++)); do ./scripts/runKCup.sh logRegBinary all 0.01; done  |tee /tmp/logregTime.log
 
 #DT
 
-for((i=0;i<4;i++)); do ./scripts/runKCup.sh DT all ; done  |tee /tmp/DTTime.log
+for((i=0;i<4;i++)); do ./scripts/runKCup.sh DT all 10 ; done  |tee /tmp/DTTime.log
 
 #kmeans
 for((i=0;i<4;i++)); do ./scripts/runKCup.sh kmeans test ; done  |tee /tmp/kmeansTime.log
