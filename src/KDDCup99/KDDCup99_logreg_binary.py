@@ -95,6 +95,7 @@ if __name__ == "__main__":
         lrModel.save(model_path)
         trainTime=time()-start
         print("Train time: {} ".format(round(trainTime,3)))
+
         # print model summary
         trainingSummary = lrModel.summary            
         print("areaUnderROC: " + str(trainingSummary.areaUnderROC))
@@ -112,6 +113,7 @@ if __name__ == "__main__":
         parsed_test_data=test_data.map(kup.parse_as_binaryTuple).filter(lambda x : x[0]!=-1.0)   
         parsed_test_data_df=spark.createDataFrame(parsed_test_data,["label","features"])
 
+        #load the learned scaler and perform feature scaling on test data
         scalerModel=StandardScalerModel.load(scaler_model_path)
         test_df_tmp= scalerModel.transform(parsed_test_data_df)
         test_df=test_df_tmp.drop("features").withColumnRenamed("scaledFeatures","features")
@@ -121,6 +123,8 @@ if __name__ == "__main__":
         testTime=time()-start
         print("Test time: {} ".format(round(testTime,3)))
         testPrediction.printSchema()
+
+        # compute precision, recall and f1 score on test data
         predictionAndLabelsRdd=testPrediction.select("label","prediction").rdd            
         kup.computeF1ScoreForBinaryClassifier(predictionAndLabelsRdd)
 

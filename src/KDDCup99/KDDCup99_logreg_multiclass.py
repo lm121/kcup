@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-# dataset: http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html
 
 import KDDCup99_common_ml as kup
 import sys
@@ -73,21 +72,21 @@ if __name__ == "__main__":
         parsed_labelpoint = raw_data.map(kup.parse_multiClass)
         parsed_labelpoint_df=spark.createDataFrame(parsed_labelpoint,["label","features"])
     
-
-
        
         print "Standardizing data..."
         scaler = StandardScaler(inputCol="features", outputCol="scaledFeatures",
                             withStd=True, withMean=True)
 
-      
+        # train a scaler to perform feature scaling
         scalerModel = scaler.fit(parsed_labelpoint_df)
-        shutil.rmtree(scalerPath,ignore_errors=True)# only work on local machine
+        shutil.rmtree(scalerPath,ignore_errors=True)
         scalerModel.save(scalerPath)
+
         # Normalize each feature to have unit standard deviation.
         train_df_tmp= scalerModel.transform(parsed_labelpoint_df)
         train_df=train_df_tmp.drop("features").withColumnRenamed("scaledFeatures","features")
 
+        # show the frequency of each label
         tmp_df=train_df.groupBy("label").count()
         tmp_df.show(10)
         
@@ -109,12 +108,12 @@ if __name__ == "__main__":
         parsed_test_data=test_data.map(kup.parse_multiClass)   
         parsed_test_data_df=spark.createDataFrame(parsed_test_data,["label","features"])
 
+        # load the scaler and perform feature scaling on test data
         scalerModel=StandardScalerModel.load(scalerPath)
         test_df_tmp= scalerModel.transform(parsed_test_data_df)
         test_df=test_df_tmp.drop("features").withColumnRenamed("scaledFeatures","features")
 
         print "Predicting test data..."
-
         lrModel=OneVsRestModel.load(logreg_path)
         testPrediction= lrModel.transform(test_df) 
 
@@ -131,11 +130,11 @@ if __name__ == "__main__":
         
         predictionAndLabels=testPrediction.select("label","prediction").rdd
         
+        #compute a simplified f1 score on prediction compared with labels of test data
         kup.computeF1ScoreForMultiClassifier(predictionAndLabels) 
 
-        metrics = MulticlassMetrics(predictionAndLabels)
-
-        # Overall statistics
+        # compute precision, recall and f1 using multiclassMetrics from Spark
+        metrics = MulticlassMetrics(predictionAndLabels)        
         precision = metrics.precision()
         recall = metrics.recall()
         f1Score = metrics.fMeasure()

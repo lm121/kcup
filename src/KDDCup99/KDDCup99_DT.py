@@ -102,25 +102,22 @@ if __name__ == "__main__":
     dt_path=kup.saved_model_path+"/dtModel"
     if trainType == "multiClass":
         dt_path=kup.saved_model_path+"/dtMultiClassModel"
-
-
-
     
   
 
     if opt=="train" or opt =="all":
+
         # load raw data
         print "Loading RAW data..."
         raw_data = sc.textFile(data_file)
         split_data=raw_data.map(lambda x: x.split(","))
    
-        # Prepare data for clustering input
+    
       
         print "Parsing dataset..."
         parsed_labelpoint = split_data.map(lambda x:parse_as_fullTuple(x,protocols,services,flags,trainType))
         
-     
-
+        # train a decision tree and save it as a file
         start=time()
         tree_model = DecisionTree.trainClassifier(parsed_labelpoint, numClasses=kup.num_attack_types, 
                                           categoricalFeaturesInfo={1: len(protocols), 2: len(services), 3: len(flags)},
@@ -132,6 +129,7 @@ if __name__ == "__main__":
 
     if opt=="test"  or opt=="all":
 
+        #load test data
         test_split=sc.textFile(golden_file).map(lambda x:x.split(","))
         parsed_test=test_split.map(lambda x:parse_as_fullTuple(x,protocols,services,flags,trainType))
 
@@ -143,8 +141,8 @@ if __name__ == "__main__":
         testTime=time()-start
         print("Test time: {} ".format(round(testTime,3)))
 
+        # compute the f1 score on test data
         labelsAndPredictions = parsed_test.map(lambda lp: lp.label).zip(predictions)
-
         kup.computeF1ScoreForBinaryClassifier(labelsAndPredictions)
         print('Learned classification tree model:')
         print(model.toDebugString())

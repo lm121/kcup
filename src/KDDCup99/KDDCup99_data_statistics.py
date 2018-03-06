@@ -75,18 +75,21 @@ if __name__ == "__main__":
 
         print "Loading RAW data..."
         raw_data = sc.textFile(data_file)
-
         split_data=raw_data.map(lambda x: x.split(","))
+
+        # gather the unique values of protocols
         protocols = split_data.map(lambda x: x[1]).distinct().collect()
         protstr='","'.join(map(str, protocols))
 
+        #gather the unique values of services
         services = split_data.map(lambda x: x[2]).distinct().collect()
         servicesStr='","'.join(map(str,services))
+
+        #gather the unique values of flags
         flags = split_data.map(lambda x: x[3]).distinct().collect()
         flagStr='","'.join(map(str,flags))
 
         print("data len "+str(len(protocols))+" "+str(len(services))+" "+str(len(flags)))
-
         print("protocol "+protstr)
         print("service "+servicesStr)
         print("flag "+flagStr)
