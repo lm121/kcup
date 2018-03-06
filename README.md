@@ -64,9 +64,9 @@ src
     ├── test_KDDCup99_DT.py
     └── test_KDDCup99_common_ml.py
 ```
+The src folder consists of two sub-folders where the KDDCup99 one containing the source code implementing the training and testing of different models while the other one, named test, contains test cases.
 
-This folder contains the python source code implementing the training and testing of different models.
-The file names are self explanatory except KDDCup99_common_ml.py which implements the common data preprocessing functions
+The file names are self explanatory except KDDCup99_common_ml.py which implements the common data preprocessing and evaluation functions
 used by most of other python modules.
 
 
