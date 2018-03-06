@@ -43,7 +43,7 @@ To run kmeans:
 cd $kcup_HOME; ./scripts/runKcup.sh kmeans train/test/all [minNumClusters] [maxNumClusters]
 ```
 
-The project also include several unit tests. To run unit tests:
+The project also includes several unit tests. To run unit tests:
 ```
 cd $kcup_HOME; ./scripts/runKcup.sh test
 ```
