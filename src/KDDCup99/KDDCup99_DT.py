@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import KDDCup99_common_ml as kup
+from KDDCup99_common_ml import protocols, services, flags
 import sys
 import os
 import shutil
@@ -17,13 +18,11 @@ try:
  
     from pyspark.ml.feature import StandardScaler
     from pyspark.ml.linalg import Vectors
-    #from pyspark.ml.classification import DecisionTreeClassifier
-    from pyspark.mllib.regression import LabeledPoint
-
-
+    
     from pyspark.ml.classification import OneVsRest
     from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 
+    from pyspark.mllib.regression import LabeledPoint
     from pyspark.mllib.tree import DecisionTree, DecisionTreeModel
     from pyspark.mllib.evaluation import BinaryClassificationMetrics
     from pyspark.mllib.evaluation import MulticlassMetrics
@@ -32,8 +31,8 @@ except ImportError as e:
     print ("Can not import Spark Modules", e)
     sys.exit(1)
 
-def parse_as_labeledpoint_DT(orgFields,protocols,services,flags,trainType):
-    
+def parse_as_fullTuple(orgFields,protocols,services,flags,trainType):
+    #remove label 
     fields = orgFields[0:41]
     
     # convert protocol to numeric categorical variable
@@ -104,10 +103,7 @@ if __name__ == "__main__":
     if trainType == "multiClass":
         dt_path=kup.saved_model_path+"/dtMultiClassModel"
 
-    #data len 3 66 11
-    protocols=["icmp","tcp","udp"]
-    services=["supdup","domain","http","whois","netstat","netbios_dgm","time","smtp","gopher","private","name","ctf","ntp_u","red_i","vmnet","tim_i","klogin","nnsp","mtp","hostnames","pop_2","urp_i","Z39_50","eco_i","ftp_data","pm_dump","systat","ftp","sql_net","efs","remote_job","finger","ldap","kshell","iso_tsap","ecr_i","nntp","printer","telnet","uucp","auth","http_443","tftp_u","login","echo","sunrpc","urh_i","uucp_path","daytime","other","pop_3","netbios_ns","shell","domain_u","courier","exec","rje","link","ssh","netbios_ssn","csnet_ns","X11","IRC","bgp","discard","imap4"]
-    flags=["S2","RSTR","OTH","RSTO","S1","SH","RSTOS0","S3","REJ","S0","SF"]
+
 
     
   
@@ -121,7 +117,7 @@ if __name__ == "__main__":
         # Prepare data for clustering input
       
         print "Parsing dataset..."
-        parsed_labelpoint = split_data.map(lambda x:parse_as_labeledpoint_DT(x,protocols,services,flags,trainType))
+        parsed_labelpoint = split_data.map(lambda x:parse_as_fullTuple(x,protocols,services,flags,trainType))
         
      
 
@@ -133,10 +129,11 @@ if __name__ == "__main__":
         tree_model.save(sc,dt_path)        
         trainTime=time()-start
         print("Train time: {} ".format(round(trainTime,3)))
+
     if opt=="test"  or opt=="all":
 
         test_split=sc.textFile(golden_file).map(lambda x:x.split(","))
-        parsed_test=test_split.map(lambda x:parse_as_labeledpoint_DT(x,protocols,services,flags,trainType))
+        parsed_test=test_split.map(lambda x:parse_as_fullTuple(x,protocols,services,flags,trainType))
 
         # Evaluate model on test instances and compute test error
         model=DecisionTreeModel.load(sc,dt_path)
@@ -145,9 +142,6 @@ if __name__ == "__main__":
         predictions.count()                
         testTime=time()-start
         print("Test time: {} ".format(round(testTime,3)))
-
-
-
 
         labelsAndPredictions = parsed_test.map(lambda lp: lp.label).zip(predictions)
 

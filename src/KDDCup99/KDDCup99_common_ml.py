@@ -45,6 +45,12 @@ num_features = [
     "dst_host_rerror_rate","dst_host_srv_rerror_rate"
 ]
 
+#data len 3 66 11
+protocols=["icmp","tcp","udp"]
+services=["supdup","domain","http","whois","netstat","netbios_dgm","time","smtp","gopher","private","name","ctf","ntp_u","red_i","vmnet","tim_i","klogin","nnsp","mtp","hostnames","pop_2","urp_i","Z39_50","eco_i","ftp_data","pm_dump","systat","ftp","sql_net","efs","remote_job","finger","ldap","kshell","iso_tsap","ecr_i","nntp","printer","telnet","uucp","auth","http_443","tftp_u","login","echo","sunrpc","urh_i","uucp_path","daytime","other","pop_3","netbios_ns","shell","domain_u","courier","exec","rje","link","ssh","netbios_ssn","csnet_ns","X11","IRC","bgp","discard","imap4"]
+flags=["S2","RSTR","OTH","RSTO","S1","SH","RSTOS0","S3","REJ","S0","SF"]
+
+
 def attacktypeToNumerical(att):
     if  "normal" in att:
         return 0.0
@@ -58,22 +64,21 @@ def parse_interaction(line):
     return (line_split[-1], array([float(x) for x in clean_line_split]))
 
 def parse_multiClass(line):
-    line_split = line.replace(".","").split(",")
+    line_split = line.split(",")
     clean_line_split = [line_split[0]]+line_split[4:-1]
-    label=line_split[-1]
+    label=line_split[-1].replace(".","")
     label_num=len(attack_names)
     if label in attack_names:
         label_num=float(attack_names.index(label))    
     return (label_num, Vectors.dense(array([float(x) for x in clean_line_split])))
 
-def parse_as_labelpoint(line):
+def parse_as_binaryTuple(line):
     """
     parse one line as a label point
     """
-    line_split = line.replace(".","").split(",")
+    line_split = line.split(",")
     clean_line_split = [line_split[0]]+line_split[4:-1]
-    label=line_split[-1]
-    #label_num=attack_types[label]
+    label=line_split[-1].replace(".","")
     label_num=attacktypeToNumerical(label)
     try:
         labelfeature=(label_num, Vectors.dense(array([float(x) for x in clean_line_split])))
@@ -84,12 +89,12 @@ def parse_as_labelpoint(line):
 
 
 def countingLabel(raw_data):
-    print "Counting all different labels"
+    print ("Counting all different labels")
     labels = raw_data.map(lambda line: line.strip().split(",")[-1])
     label_counts = labels.countByValue()
     sorted_labels = OrderedDict(sorted(label_counts.items(), key=lambda t: t[1], reverse=True))
     for label, count in sorted_labels.items():
-        print label, count
+        print( str(label)+" "+ str(count))
 
 def computeF1ScoreForBinaryClassifier(predictLabelRdd):
     tp=predictLabelRdd.filter(lambda (v, p): v == 1.0 and p==1.0 ).count() 

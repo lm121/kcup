@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
         
         print "Parsing dataset..."
-        parsed_labelpoint = raw_data.map(kup.parse_as_labelpoint).filter(lambda x : x[0]!=-1.0)
+        parsed_labelpoint = raw_data.map(kup.parse_as_binaryTuple).filter(lambda x : x[0]!=-1.0)
         parsed_labelpoint_df=spark.createDataFrame(parsed_labelpoint,["label","features"])
 
         print "Standardizing data..."
@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
         # load test data and perform feature scaling on test data
         test_data=sc.textFile(golden_file)  
-        parsed_test_data=test_data.map(kup.parse_as_labelpoint).filter(lambda x : x[0]!=-1.0)   
+        parsed_test_data=test_data.map(kup.parse_as_binaryTuple).filter(lambda x : x[0]!=-1.0)   
         parsed_test_data_df=spark.createDataFrame(parsed_test_data,["label","features"])
 
         scalerModel=StandardScalerModel.load(scaler_model_path)

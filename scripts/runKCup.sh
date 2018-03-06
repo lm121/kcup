@@ -1,7 +1,7 @@
 #!/bin/bash
 
 printUsageExit(){
-	echo "$0: [algorithm:logRegBinary/logRegMulticlass/DT/kmeans/dataStat] [option:train/test/all]"
+	echo "$0: [algorithm:logRegBinary/logRegMulticlass/DT/kmeans/dataStat] [option:help/train/test/all]"
 	exit 0
 }
 if [ $# -lt 1 ]; then
@@ -16,11 +16,11 @@ curdir=$(pwd)
 #define variables needed in this script
 sparkMaster=local[*]
 export saved_model_path="$curdir/../trained_model"
-kupDir=${curdir}/../src/KDDCup99
+export kupDir=${curdir}/../src/KDDCup99
 dataDir=${curdir}/../../datasets
 testData=${dataDir}/corrected
-#trainData=${dataDir}/kddcup.data_10_percent.txt
-trainData=${dataDir}/kddcup.data.txt
+trainData=${dataDir}/kddcup.data_10_percent.txt
+#trainData=${dataDir}/kddcup.data.txt
 opt=$1
 phase="help"
 
@@ -71,10 +71,13 @@ elif [[ $opt = "trySpark" ]];then
 	echo "explore spark"
 	time spark-submit --master ${sparkMaster} --total-executor-cores 4 --executor-memory 4g ${kupDir}/explore_spark.py  $trainData $testData
 
-elif [ "$opt" = "test1" ]; then
-	echo "test1 kupdir $kupDir "
-	echo "model path: $saved_model_path"
+elif [ "$opt" = "test" ]; then
+	testDir="${curdir}/../src/test"
 
+	echo "kupdir $kupDir;testDir $testDir "
+	
+	cd $testDir
+	time python -m unittest test_KDDCup99
 
 else
 	printUsageExit

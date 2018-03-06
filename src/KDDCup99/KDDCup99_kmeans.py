@@ -32,33 +32,6 @@ except ImportError as e:
 
 
 
-
-def distance(a, b):
-    """
-    Calculates the euclidean distance between two numeric RDDs
-    """
-    return sqrt(
-        a.zip(b)
-        .map(lambda x: (x[0]-x[1]))
-        .map(lambda x: x*x)
-        .reduce(lambda a,b: a+b)
-        )
-
-def dist_to_centroid(datum, clusters):
-    """
-    Determines the distance of a point to its cluster centroid
-    """
-    cluster = clusters.predict(datum)
-    centroid = clusters.centers[cluster]
-    return sqrt(sum([x**2 for x in (centroid - datum)]))
-
-
-def clustering_score(data, k):
-    clusters = KMeans.train(data, k, maxIterations=10, runs=5, initializationMode="random")
-    result = (k, clusters, data.map(lambda datum: dist_to_centroid(datum, clusters)).mean())
-    print "Clustering score for k=%(k)d is %(score)f" % {"k": k, "score": result[2]}
-    return result
-
 def clustering_score_vec(data,ink):    
     kmeans = KMeans(k=ink,seed=1,maxIter=20)
     print("training kmeansML model")
@@ -169,7 +142,7 @@ if __name__ == "__main__":
         cluster_label.show(5)
         
         test_data=sc.textFile(golden_file)  
-        parsed_test_data=test_data.map(kup.parse_as_labelpoint).filter(lambda x : x[0]!=-1.0)   
+        parsed_test_data=test_data.map(kup.parse_as_binaryTuple).filter(lambda x : x[0]!=-1.0)   
         parsed_test_data_df=spark.createDataFrame(parsed_test_data,["label","features"])
 
         scalerModel=StandardScalerModel.load(scaler_model_path)
