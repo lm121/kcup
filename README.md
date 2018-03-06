@@ -22,7 +22,7 @@ Assume the dataset folder is stored in a folder named "datasets" at the same dir
 If that is not the case, please change the "dataDir" variable in ./script/runKCup.sh
 
 
-### Run and unit test
+### Execution and unit test
 ```
 scripts/
 ├── runAll.sh
