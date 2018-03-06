@@ -15,14 +15,14 @@ learning models.
 experimentFigures.xlsx contains all the data and figures used in the KDDCup99.pptx document.
 
 ## Setup
-Dependencies: Spark 2.1+, Python 2 or Python 3
+Dependencies: Spark 2.1+, Python 2.7
 
 Download the datasets from [here](http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html).
 Assume the dataset folder is stored in a folder named "datasets" at the same directory level of the kcup repository. 
 If that is not the case, please change the "dataDir" variable in ./script/runKCup.sh
 
 
-### Run
+### Run and unit test
 ```
 scripts/
 ├── runAll.sh
@@ -42,6 +42,12 @@ To run kmeans:
 ```
 cd $kcup_HOME; ./scripts/runKcup.sh kmeans train/test/all [minNumClusters] [maxNumClusters]
 ```
+
+The project also include several unit tests. To run unit tests:
+```
+cd $kcup_HOME; ./scripts/runKcup.sh test
+```
+
 
 ### High level description of Source code
 ```
