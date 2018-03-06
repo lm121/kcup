@@ -49,7 +49,7 @@ cd $kcup_HOME; ./scripts/runKcup.sh test
 ```
 
 
-### High level description of Source code
+### High level description of source code
 ```
 src
 ├── KDDCup99
