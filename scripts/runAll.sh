@@ -21,10 +21,14 @@ if [ $opt == "allTest" ];then
 
 elif [ $opt == "allTrain" ];then
 	sh $curdir/runKCup.sh logRegBinary train
-	sh $curdir/runKCup.sh logRegBinary "test"
-	sh $curdir/runKCup.sh logRegBinary all
+	sh $curdir/runKCup.sh DT train
+	sh $curdir/runKCup.sh kmeans train
 
 elif [ $opt == "all" ];then
+	sh $curdir/runKCup.sh logRegBinary all
+	sh $curdir/runKCup.sh DT all
+	sh $curdir/runKCup.sh kmeans all
+elif [ $opt == "others" ];then
 	#DT
 	rm -f /tmp/dt.log;for ll in 6 8 10 12; do echo "tree depth $ll";./scripts/runKCup.sh DT all binary $ll;  done |tee /tmp/dt.log
 
