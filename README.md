@@ -60,6 +60,9 @@ src
 │   ├── KDDCup99_logreg_binary.py
 │   ├── KDDCup99_logreg_multiclass.py
 └── test
+    ├── test_KDDCup99.py
+    ├── test_KDDCup99_DT.py
+    └── test_KDDCup99_common_ml.py
 ```
 
 This folder contains the python source code implementing the training and testing of different models.
