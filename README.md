@@ -1,6 +1,6 @@
 # Network Intrusion Detection
 This project uses three algorithms including logistic regression, decision tree and kmeans to 
-tackle the network intrusion competition in KDD Cup 1999 with python and Spark. 
+tackle the network intrusion competition in [KDD Cup 1999](kdd.org/kdd-cup/view/kdd-cup-1999/Tasks) with python and Spark. 
 
 ### Documentation
 ```
